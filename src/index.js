@@ -2,8 +2,6 @@ import chroma from 'chroma-js';
 
 export {chroma};
 
-export const palette = {stain: {}};
-
 export const MATERIAL_GREY = {
   0: '#ffffff',
   50: '#fafafa',

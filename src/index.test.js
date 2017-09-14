@@ -46,10 +46,15 @@ test('createStainSwatches (typical)', t => {
     .hex();
   t.is(stain.z900, expected900);
   t.is(stain.z1000, '#000000');
-  const expectedA = chroma
-    .mix(options.accent.mixBase, sourceColor, options.accent.bases.A)
-    .hex();
-  t.is(stain.zA, expectedA);
+  const expectedA = chroma.mix(
+    options.accent.mixBase,
+    sourceColor,
+    options.accent.bases.A,
+  );
+  t.is(stain.zA, expectedA.hex());
+  t.true(Array.isArray(stain.rgb.zA));
+  t.is(stain.rgb.zA[1], expectedA.rgb()[1]);
+  t.is(stain.css.zA, expectedA.css());
 });
 
 test('createStainSwatches (weird and wacky)', t => {
