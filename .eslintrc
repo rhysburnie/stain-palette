@@ -1,0 +1,33 @@
+{
+  "parser": "babel-eslint",
+  "env": {
+    "node": true
+  },
+  "globals": {
+    "fetch": true
+  },
+  "extends": [
+    "airbnb",
+    "plugin:ava/recommended",
+    "prettier",
+    "prettier/flowtype",
+    "prettier/react"
+  ],
+  "plugins": [
+    "react",
+    "jsx-a11y",
+    "import",
+    "ava",
+    "prettier"
+  ],
+  "rules": {
+    arrow-parens: ["error", "as-needed"]
+  },
+  "prettier/prettier": [
+    "error",
+    {
+      "singleQuote": true,
+      "trailingComma": "all",
+    },
+  ]
+}
