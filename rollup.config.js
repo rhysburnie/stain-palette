@@ -19,6 +19,14 @@ rc.presets.forEach((preset, i) => {
 // console.log(JSON.stringify(rc, null, 2));
 
 const external = Object.keys(pkg.dependencies || {});
+external.push('react');
+external.push('prop-types');
+
+const globals = {
+  'chroma-js': 'chroma',
+  react: 'React',
+  'prop-types': 'PropTypes',
+};
 
 function makeConfig({input, esFile, umdFile, umdName, sourcemap}) {
   return {
@@ -35,9 +43,7 @@ function makeConfig({input, esFile, umdFile, umdName, sourcemap}) {
         format: 'umd',
         file: umdFile,
         name: umdName,
-        globals: {
-          'chroma-js': 'chroma',
-        },
+        globals,
         sourcemap,
       },
     ],
@@ -54,11 +60,13 @@ const configs = [
   }),
 ];
 
-// Add other bundles
+// Add individuals used by Palette
 [
   'paletteDefaults',
   'createStainSwatches',
   'mergeStainObjects',
+  'react/PaletteProvider',
+  'react/PaletteHOC',
 ].forEach(fileName =>
   configs.push(
     makeConfig({
@@ -70,5 +78,23 @@ const configs = [
     }),
   ),
 );
+
+// configs.push({
+//   input: 'src/react/PaletteProvider.js',
+//   external,
+//   plugins: [babel(rc)],
+//   output: [
+//     {
+//       format: 'es',
+//       file: 'dist/react/PaletteProvider.js',
+//       sourcemap: true,
+//     },
+//     {
+//       format: 'cjs',
+//       file: 'dist/react/PaletteProvider.cjs.js',
+//       sourcemap: true,
+//     },
+//   ],
+// });
 
 export default configs;

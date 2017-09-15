@@ -9,6 +9,7 @@ const defaultStain = createStainSwatches('$', '#ffffff', {
 });
 
 const SYMBOL_PREFIX = Symbol('prefix');
+const SYMBOL_INVERTED = Symbol('inverted');
 const SYMBOL_MERGE_STAINS = Symbol('mergeStains');
 const SYMBOL_STAIN_PREFIXES = Symbol('stainKeys');
 
@@ -21,10 +22,13 @@ export default class Palette {
       'inverted',
       'addStain',
       'addSwatch',
+      'subscribe',
+      'subscriptions',
       'rgb',
       'css',
     ];
     this.options = {...paletteDefaults, ...options};
+    this.subscriptions = [];
     this.stains = {};
     this.rgb = {};
     this.css = {};
@@ -45,6 +49,18 @@ export default class Palette {
   set prefix(str) {
     if (this[SYMBOL_STAIN_PREFIXES].indexOf(str) > -1) {
       this[SYMBOL_PREFIX] = str;
+      this.subscriptions.forEach(fn => fn());
+    }
+  }
+
+  get inverted() {
+    return this[SYMBOL_INVERTED];
+  }
+
+  set inverted(bool) {
+    if (typeof bool === 'boolean' && bool !== this[SYMBOL_INVERTED]) {
+      this[SYMBOL_INVERTED] = bool;
+      this.subscriptions.forEach(fn => fn());
     }
   }
 
@@ -104,5 +120,9 @@ export default class Palette {
         });
       }
     }
+  }
+
+  subscribe(fn) {
+    this.subscriptions.push(fn);
   }
 }
