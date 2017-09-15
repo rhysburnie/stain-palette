@@ -7,8 +7,6 @@ const pkg = require('./package.json');
 
 const external = Object.keys(pkg.dependencies || {});
 
-const entry = 'src/Palette.js';
-
 // my hacky fix to: https://github.com/eventualbuddha/babelrc-rollup/issues/6
 const rc = babelrc();
 const doesNotAcceptOptions = ['stage-0'];
@@ -22,24 +20,67 @@ rc.presets.forEach((preset, i) => {
 });
 // console.log(JSON.stringify(rc, null, 2));
 
-export default {
-  entry,
-  external,
-  plugins: [babel(rc)],
-  targets: [
-    {
-      format: 'es',
-      dest: pkg['jsnext:main'],
-      sourceMap: true,
-    },
-    {
-      format: 'umd',
-      dest: pkg.main,
-      moduleName: pkg['umd:moduleName'],
-      sourceMap: true,
-      globals: {
-        'chroma-js': 'chroma',
+function makeConfig({input, esFile, umdFile, umdName, umdGlobals, sourcemap}) {
+  return {
+    input,
+    external,
+    plugins: [babel(rc)],
+    output: [
+      {
+        format: 'es',
+        file: esFile,
+        sourcemap,
       },
+      {
+        format: 'umd',
+        file: umdFile,
+        name: umdName,
+        globals: umdGlobals,
+        sourcemap,
+      },
+    ],
+  };
+}
+
+export default [
+  makeConfig({
+    input: 'src/Palette.js',
+    esFile: pkg['jsnext:main'],
+    umdFile: pkg.main,
+    umdName: pkg['umd:moduleName'],
+    umdGlobals: {
+      'chroma-js': 'chroma',
     },
-  ],
-};
+    sourcemap: true,
+  }),
+  makeConfig({
+    input: 'src/createStainSwatches.js',
+    esFile: 'dist/createStainSwatches.js',
+    umdFile: 'dist/createStainSwatches.umd.js',
+    umdName: 'createStainSwatches',
+    umdGlobals: {
+      'chroma-js': 'chroma',
+    },
+    sourcemap: true,
+  }),
+  makeConfig({
+    input: 'src/mergeStainObjects.js',
+    esFile: 'dist/mergeStainObjects.js',
+    umdFile: 'dist/mergeStainObjects.umd.js',
+    umdName: 'mergeStainObjects',
+    umdGlobals: {
+      'chroma-js': 'chroma',
+    },
+    sourcemap: true,
+  }),
+  makeConfig({
+    input: 'src/paletteDefaults.js',
+    esFile: 'dist/paletteDefaults.js',
+    umdFile: 'dist/paletteDefaults.umd.js',
+    umdName: 'paletteDefaults',
+    umdGlobals: {
+      'chroma-js': 'chroma',
+    },
+    sourcemap: true,
+  }),
+];

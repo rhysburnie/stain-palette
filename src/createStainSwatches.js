@@ -1,18 +1,6 @@
 import chroma from 'chroma-js';
 
-import {MATERIAL_GREY_SCALE} from './defaultScales';
-
-export const defaultStainOptions = {
-  scale: {
-    bases: MATERIAL_GREY_SCALE,
-    mode: 'multiply',
-  },
-  accent: {
-    bases: {A: 0.2},
-    mode: 'mix',
-    mixBase: MATERIAL_GREY_SCALE[0],
-  },
-};
+import {defaultStainOptions} from './paletteDefaults';
 
 export default function createStainSwatches(prefix, sourceColor, options = {}) {
   const stain = {prefix, sourceColor, rgb: {}, css: {}};

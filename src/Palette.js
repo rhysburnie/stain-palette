@@ -1,5 +1,6 @@
-import createStainSwatches, {defaultStainOptions} from './createStainSwatches';
+import createStainSwatches from './createStainSwatches';
 import mergeStainObjects from './mergeStainObjects';
+import {defaultStainOptions} from './paletteDefaults';
 
 const paletteDefaults = {...defaultStainOptions};
 const defaultStain = createStainSwatches('$', '#ffffff', {

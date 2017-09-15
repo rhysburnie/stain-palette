@@ -2,7 +2,7 @@ import {test} from 'ava';
 import chroma from 'chroma-js';
 
 import createStainSwatches from './createStainSwatches';
-import {MATERIAL_GREY_SCALE, FLOAT_SCALE} from './defaultScales';
+import {MATERIAL_GREY_SCALE, FLOAT_SCALE} from './paletteDefaults';
 
 test('preflight', t => {
   t.is(typeof chroma, 'function');

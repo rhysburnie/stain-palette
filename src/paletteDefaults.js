@@ -27,3 +27,15 @@ export const FLOAT_SCALE = {
   900: 0.9,
   1000: 1,
 };
+
+export const defaultStainOptions = {
+  scale: {
+    bases: MATERIAL_GREY_SCALE,
+    mode: 'multiply',
+  },
+  accent: {
+    bases: {A: 0.2},
+    mode: 'mix',
+    mixBase: MATERIAL_GREY_SCALE[0],
+  },
+};
