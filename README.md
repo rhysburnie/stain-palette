@@ -1,5 +1,9 @@
 # Stain Palette
 
+## TODO
+
+Get auto build working on install, currently would have to manually build.
+
 ## Usage
 
 * `import Palette from 'stain-palette'`
