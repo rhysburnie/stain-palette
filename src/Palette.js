@@ -13,9 +13,17 @@ const SYMBOL_INVERTED = Symbol('inverted');
 const SYMBOL_MERGE_STAINS = Symbol('mergeStains');
 const SYMBOL_STAIN_PREFIXES = Symbol('stainKeys');
 
+const warn = msg => {
+  try {
+    console.warn(`Palette: ${msg}`); // eslint-disable-line
+  } catch (err) {
+    /* none */
+  }
+};
+
 export default class Palette {
   constructor(options = {}) {
-    this.invalidPrefixes = [
+    this.invalidSwatchIds = [
       'prefix',
       'options',
       'stains',
@@ -24,6 +32,7 @@ export default class Palette {
       'addSwatch',
       'subscribe',
       'subscriptions',
+      'update',
       'rgb',
       'css',
     ];
@@ -46,22 +55,34 @@ export default class Palette {
     return this[SYMBOL_PREFIX];
   }
 
-  set prefix(str) {
-    if (this[SYMBOL_STAIN_PREFIXES].indexOf(str) > -1) {
-      this[SYMBOL_PREFIX] = str;
-      this.subscriptions.forEach(fn => fn());
-    }
+  set prefix(prefix) {
+    this.update({prefix});
   }
 
   get inverted() {
     return this[SYMBOL_INVERTED];
   }
 
-  set inverted(bool) {
-    if (typeof bool === 'boolean' && bool !== this[SYMBOL_INVERTED]) {
-      this[SYMBOL_INVERTED] = bool;
-      this.subscriptions.forEach(fn => fn());
+  set inverted(inverted) {
+    this.update({inverted});
+  }
+
+  /**
+   * Both prefix and inverted can be set at the same
+   * time by using the update method directly if desired.
+   * It also allows for future features to update here too.
+   */
+  update({prefix, inverted}) {
+    if (
+      typeof prefix === 'string' &&
+      this[SYMBOL_STAIN_PREFIXES].indexOf(prefix) > -1
+    ) {
+      this[SYMBOL_PREFIX] = prefix;
     }
+    if (typeof inverted === 'boolean' && inverted !== this[SYMBOL_INVERTED]) {
+      this[SYMBOL_INVERTED] = inverted;
+    }
+    this.subscriptions.forEach(fn => fn());
   }
 
   addStain(prefix, sourceColor, options = {}) {
@@ -82,7 +103,9 @@ export default class Palette {
           swatch.inverse.prefix === '*' ||
           this[SYMBOL_STAIN_PREFIXES].indexOf(swatch.inverse.prefix) > 1;
       }
-      return validPrefixes && this.invalidPrefixes.indexOf(swatch.id) < 0;
+      return (
+        validPrefixes && this.invalidSwatchIds.join(',').indexOf(swatch.id) < 0
+      );
     })();
 
     if (valid) {
@@ -118,6 +141,10 @@ export default class Palette {
             return this.stains.css[key];
           },
         });
+      } else {
+        warn(
+          `invalid swatch id - reserved: ${this.invalidSwatchIds.join(',')}`,
+        );
       }
     }
   }
