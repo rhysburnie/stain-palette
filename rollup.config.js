@@ -7,7 +7,7 @@ const pkg = require('./package.json');
 
 const external = Object.keys(pkg.dependencies || {});
 
-const entry = 'src/index.js';
+const entry = 'src/Palette.js';
 
 // my hacky fix to: https://github.com/eventualbuddha/babelrc-rollup/issues/6
 const rc = babelrc();
@@ -25,9 +25,7 @@ rc.presets.forEach((preset, i) => {
 export default {
   entry,
   external,
-  plugins: [
-    babel(rc),
-  ],
+  plugins: [babel(rc)],
   targets: [
     {
       format: 'es',
@@ -39,6 +37,9 @@ export default {
       dest: pkg.main,
       moduleName: pkg['umd:moduleName'],
       sourceMap: true,
+      globals: {
+        'chroma-js': 'chroma',
+      },
     },
   ],
 };
