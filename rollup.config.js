@@ -5,8 +5,6 @@ import babelrc from 'babelrc-rollup';
 
 const pkg = require('./package.json');
 
-const external = Object.keys(pkg.dependencies || {});
-
 // my hacky fix to: https://github.com/eventualbuddha/babelrc-rollup/issues/6
 const rc = babelrc();
 const doesNotAcceptOptions = ['stage-0'];
@@ -20,7 +18,9 @@ rc.presets.forEach((preset, i) => {
 });
 // console.log(JSON.stringify(rc, null, 2));
 
-function makeConfig({input, esFile, umdFile, umdName, umdGlobals, sourcemap}) {
+const external = Object.keys(pkg.dependencies || {});
+
+function makeConfig({input, esFile, umdFile, umdName, sourcemap}) {
   return {
     input,
     external,
@@ -35,52 +35,40 @@ function makeConfig({input, esFile, umdFile, umdName, umdGlobals, sourcemap}) {
         format: 'umd',
         file: umdFile,
         name: umdName,
-        globals: umdGlobals,
+        globals: {
+          'chroma-js': 'chroma',
+        },
         sourcemap,
       },
     ],
   };
 }
 
-export default [
+const configs = [
   makeConfig({
     input: 'src/Palette.js',
     esFile: pkg['jsnext:main'],
     umdFile: pkg.main,
     umdName: pkg['umd:moduleName'],
-    umdGlobals: {
-      'chroma-js': 'chroma',
-    },
-    sourcemap: true,
-  }),
-  makeConfig({
-    input: 'src/createStainSwatches.js',
-    esFile: 'dist/createStainSwatches.js',
-    umdFile: 'dist/createStainSwatches.umd.js',
-    umdName: 'createStainSwatches',
-    umdGlobals: {
-      'chroma-js': 'chroma',
-    },
-    sourcemap: true,
-  }),
-  makeConfig({
-    input: 'src/mergeStainObjects.js',
-    esFile: 'dist/mergeStainObjects.js',
-    umdFile: 'dist/mergeStainObjects.umd.js',
-    umdName: 'mergeStainObjects',
-    umdGlobals: {
-      'chroma-js': 'chroma',
-    },
-    sourcemap: true,
-  }),
-  makeConfig({
-    input: 'src/paletteDefaults.js',
-    esFile: 'dist/paletteDefaults.js',
-    umdFile: 'dist/paletteDefaults.umd.js',
-    umdName: 'paletteDefaults',
-    umdGlobals: {
-      'chroma-js': 'chroma',
-    },
     sourcemap: true,
   }),
 ];
+
+// Add other bundles
+[
+  'paletteDefaults',
+  'createStainSwatches',
+  'mergeStainObjects',
+].forEach(fileName =>
+  configs.push(
+    makeConfig({
+      input: `src/${fileName}.js`,
+      esFile: `dist/${fileName}.js`,
+      umdFile: `dist/${fileName}.umd.js`,
+      umdName: fileName,
+      sourcemap: true,
+    }),
+  ),
+);
+
+export default configs;
