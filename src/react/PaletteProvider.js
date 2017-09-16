@@ -1,15 +1,5 @@
-/* eslint-disable */
-/**
- * NOTE:
- * This actually isn't a React library
- * but has these utilities for react usage
- * as such I am not listing React, PropTypes
- * as dependencies anywhere.
- * It is up to end user to have them installed.
- */
 import React from 'react';
 import PropTypes from 'prop-types';
-/* eslint-enable */
 
 class PaletteProvider extends React.PureComponent {
   /* eslint-disable react/forbid-prop-types */

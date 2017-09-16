@@ -21,7 +21,8 @@
     "prettier"
   ],
   "rules": {
-    arrow-parens: ["error", "as-needed"]
+    "arrow-parens": ["error", "as-needed"],
+    "import/no-extraneous-dependencies": ["error", {"devDependencies": true}]
   },
   "prettier/prettier": [
     "error",
