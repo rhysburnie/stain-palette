@@ -94,7 +94,7 @@ export default class Palette {
     this[SYMBOL_MERGE_STAINS](stain);
   }
 
-  addSwatch(swatch = {}) {
+  addSwatch(id, swatch = {}) {
     const valid = (() => {
       let validPrefixes =
         swatch.prefix === '*' ||
@@ -104,13 +104,11 @@ export default class Palette {
           swatch.inverse.prefix === '*' ||
           this[SYMBOL_STAIN_PREFIXES].indexOf(swatch.inverse.prefix) > 1;
       }
-      return (
-        validPrefixes && this.invalidSwatchIds.join(',').indexOf(swatch.id) < 0
-      );
+      return validPrefixes && this.invalidSwatchIds.join(',').indexOf(id) < 0;
     })();
 
     if (valid) {
-      if (!Object.getOwnPropertyDescriptor(this, swatch.id)) {
+      if (!Object.getOwnPropertyDescriptor(this, id)) {
         const getStainKey = swatchData => {
           let prefix =
             swatchData.prefix === '*' ? this.prefix : swatchData.prefix;
@@ -124,19 +122,19 @@ export default class Palette {
           }
           return prefix + suffix;
         };
-        Object.defineProperty(this, swatch.id, {
+        Object.defineProperty(this, id, {
           get() {
             const key = getStainKey(swatch);
             return this.stains[key];
           },
         });
-        Object.defineProperty(this.rgb, swatch.id, {
+        Object.defineProperty(this.rgb, id, {
           get() {
             const key = getStainKey(swatch);
             return this.stains.rgb[key];
           },
         });
-        Object.defineProperty(this.css, swatch.id, {
+        Object.defineProperty(this.css, id, {
           get() {
             const key = getStainKey(swatch);
             return this.stains.css[key];

@@ -19,7 +19,6 @@ test('new Palette()', t => {
   palette.prefix = 'r';
   t.is(palette.prefix, 'r');
   const swatch = {
-    id: 'background',
     prefix: '*',
     suffix: 0,
     inverse: {
@@ -27,7 +26,7 @@ test('new Palette()', t => {
       suffix: 1000,
     },
   };
-  palette.addSwatch(swatch);
+  palette.addSwatch('background', swatch);
   palette.prefix = 'r';
   t.is(palette.background, palette.stains.r0);
   palette.inverted = true;
@@ -36,8 +35,7 @@ test('new Palette()', t => {
   palette.inverted = false;
   palette.prefix = 'g';
   t.is(palette.background, palette.stains.g0);
-  palette.addSwatch({
-    id: 'alwaysGreen',
+  palette.addSwatch('alwaysGreen', {
     prefix: 'g',
     suffix: 0,
   });

@@ -29,7 +29,6 @@ A semantic swatch is represented in POGO:
 Example: _background_ swatch
 ```
 const backgroundSwatch = {
-  id: 'background',
   prefix: '*',
   // '*' use current palette.prefix
   // can be any explicit registered stain prefix
@@ -46,7 +45,7 @@ const backgroundSwatch = {
   }
 };
 
-palette.addSwatch(backgroundSwatch);
+palette.addSwatch('background', backgroundSwatch);
 ```
 
 Now calling `palette.background` will return `palette.stains.$0`
