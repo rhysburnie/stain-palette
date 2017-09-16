@@ -98,11 +98,11 @@ export default class Palette {
     const valid = (() => {
       let validPrefixes =
         swatch.prefix === '*' ||
-        this[SYMBOL_STAIN_PREFIXES].indexOf(swatch.prefix) > 1;
+        this[SYMBOL_STAIN_PREFIXES].indexOf(swatch.prefix) > -1;
       if (swatch.inverse) {
         validPrefixes =
           swatch.inverse.prefix === '*' ||
-          this[SYMBOL_STAIN_PREFIXES].indexOf(swatch.inverse.prefix) > 1;
+          this[SYMBOL_STAIN_PREFIXES].indexOf(swatch.inverse.prefix) > -1;
       }
       return validPrefixes && this.invalidSwatchIds.join(',').indexOf(id) < 0;
     })();
@@ -125,6 +125,7 @@ export default class Palette {
         Object.defineProperty(this, id, {
           get() {
             const key = getStainKey(swatch);
+            console.log(key, swatch);
             return this.stains[key];
           },
         });

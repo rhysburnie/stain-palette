@@ -44,4 +44,9 @@ test('new Palette()', t => {
   palette.inverted = true;
   t.is(palette.alwaysGreen, palette.stains.g0);
   t.is(palette.stains.gA.indexOf('#'), 0);
+  palette.addSwatch('fixedPrefixColor', {
+    prefix: '$',
+    suffix: 0,
+  });
+  t.is(palette.fixedPrefixColor, '#ffffff');
 });
