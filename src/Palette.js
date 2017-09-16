@@ -72,7 +72,8 @@ export default class Palette {
    * time by using the update method directly if desired.
    * It also allows for future features to update here too.
    */
-  update({prefix, inverted}) {
+  update(settings = {}) {
+    const {prefix, inverted} = settings;
     if (
       typeof prefix === 'string' &&
       this[SYMBOL_STAIN_PREFIXES].indexOf(prefix) > -1
