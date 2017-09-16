@@ -71,8 +71,8 @@ const configs = [
   configs.push(
     makeConfig({
       input: `src/${fileName}.js`,
-      esFile: `dist/${fileName}.js`,
-      umdFile: `dist/${fileName}.umd.js`,
+      esFile: `dist/${fileName}.es.js`,
+      umdFile: `dist/${fileName}.js`,
       umdName: fileName,
       sourcemap: true,
     }),

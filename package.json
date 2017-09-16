@@ -1,8 +1,8 @@
 {
   "name": "stain-palette",
   "version": "0.0.0",
-  "jsnext:main": "dist/Palette.js",
-  "main": "dist/Palette.umd.js",
+  "jsnext:main": "dist/Palette.es.js",
+  "main": "dist/Palette.js",
   "umd:moduleName": "StainPalette",
   "author": "Rhys Burnie",
   "license": "MIT",
