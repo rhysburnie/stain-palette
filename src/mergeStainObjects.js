@@ -18,10 +18,12 @@ export default function mergeStainObjects(...stains) {
       if (typeof css === 'object') {
         merged.css = {...merged.css, ...css};
       }
-      merged.prefixes = {
-        ...merged.prefixes,
-        [prefix]: {sourceColor, name},
-      };
+      if (prefix) {
+        merged.prefixes = {
+          ...merged.prefixes,
+          [prefix]: {sourceColor, name},
+        };
+      }
       merged = {...merged, ...prefixed};
     }
   });
