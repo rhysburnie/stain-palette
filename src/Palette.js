@@ -125,7 +125,6 @@ export default class Palette {
         Object.defineProperty(this, id, {
           get() {
             const key = getStainKey(swatch);
-            console.log(key, swatch);
             return this.stains[key];
           },
         });
