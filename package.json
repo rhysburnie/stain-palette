@@ -41,13 +41,10 @@
     "test:remote": "ava **/*.remoteTest.js",
     "lint": "eslint .",
     "build:dist": "rollup -c",
-    "prepublish": "npm run build:dist"
+    "prepare": "npm run build:dist"
   },
   "ava": {
-    "require": [
-      "babel-register",
-      "babel-polyfill"
-    ],
+    "require": ["babel-register", "babel-polyfill"],
     "babel": "inherit"
   }
 }
