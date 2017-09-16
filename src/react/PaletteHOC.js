@@ -12,8 +12,7 @@ export default function PaletteHOC(BaseComponent) {
     }
 
     render() {
-      // return <BaseComponent {...this.props} palette={this.context.palette} />;
-      return React.cloneElement(BaseComponent, {palette: this.context.palette});
+      return <BaseComponent {...this.props} palette={this.context.palette} />;
     }
   }
   return PaletteWrapped;
