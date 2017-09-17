@@ -29,24 +29,18 @@ A semantic swatch is represented in POGO:
 Example: _background_ swatch
 ```
 const backgroundSwatch = {
-  prefix: '*',
-  // '*' use current palette.prefix
-  // can be any explicit registered stain prefix
-  // however they MUST be registered first
-  // otherwise the entire swatch will be rejected
-  suffix: 0,   // one of the base scale keys (default 0, 50, 100, 200, 300 - 1000)
-
+  '*': 0,
   // (optional)
-  // use thse settings if `palette.inverted === true`
-  // (otherwise will use default prefix / suffix)
   inverse: {
-    prefix: '*',
-    suffix: 1000
+    '*': 1000
   }
 };
 
 palette.addSwatch('background', backgroundSwatch);
 ```
+**Important**
+
+The swatch object **MUST** have at least `'*'` to be added, (the optional `inverse` object must also have at least `'*'`).
 
 Now calling `palette.background` will return `palette.stains.greyscale0`
 because `'greyscale'` (default) is the current `palette.prefix`, in which case
@@ -79,17 +73,10 @@ palette.addStain(prefix, sourceColor);
 
 **But what the real purpose of `palette` is** we can change the `palette.prefix`.
 
-```
-palette.prefix = 'r';
-// works because it's registered
-// if unknown prefix used the current `palette.prefix` will not change
+`palette.prefix = 'r';`
+works because it's registered, if unknown prefix used the current `palette.prefix` will not change.
 
-palette.background === palette.stains.r0
-// it's now red (in fact the exact sourceColor)
-// because the default scale value 0 is white
-// and any color multiplied over white remains the same
-// (assuming you are using 'multiply' mode which is default)
-```
+`palette.background` will now be `palette.stains.r0`
 
 In default mode `prefix` + `'0'` is sourceColor and the brightest available in the scale.
 
@@ -98,10 +85,67 @@ it is white mixed over the sourceColor.
 
 > Note: the default 'greyscale' has no `greyscaleA` as it would be the same as `greyscale0` (white)
 
-There is only one accent but you can configure palette to have more, in fact you can
-define an entirely different base scale also.
+There is only one accent but you can configure palette to have more, in fact you can define an entirely different base scale also.
 
-More on that later...
+**TODO** explain that later, but there are caveats
+
+### Advanced
+
+For each swatch
+The `'*'` value (stain suffix) will be used for all of current `palette.prefix`. If you desire a seperate suffix value for a specific prefix you can add the specific prefix key:
+
+example: imagine you have the following registered: `'r'`, `'g'`, `'b'`.
+
+```
+palette.addSwatch('something', {
+  '*': 0,
+  'b': 500,
+  inverse: {
+    '*': 200
+  }
+})
+
+`palette.prefix = 'r'`: `palette.something` is `palette.stains.r0`
+`palette.prefix = 'g'`: `palette.something` is `palette.stains.g0`
+`palette.prefix = 'b'`: `palette.something` is `palette.stains.b500`
+`palette.inverted = true`:
+`palette.prefix = 'r'`: `palette.something` is `palette.stains.r200`
+`palette.prefix = 'g'`: `palette.something` is `palette.stains.g200`
+`palette.prefix = 'b'`: `palette.something` is `palette.stains.b200`
+```
+
+But what if I want a color to never change regardless of `palette.prefix`?
+
+```
+palette.addSwatch('alwaysBlue', {
+  '*': {'b': 500},
+})
+```
+
+**NOTE** when using object as fixed value only one key is allowed or the entire swatch will be rejected.
+
+### Add multiple swatches at once
+
+```
+palette.addSwatches({
+  background: {
+    '*': 900,
+    y: 0,
+    inverse: {
+      '*': 500,
+      y: 900,
+    },
+  },
+  foreground: {
+    '*': 0,
+    y: {greyscale: 900},
+    inverse: {
+      '*': {greyscale: 0},
+      y: 0,
+    },
+  },
+})
+```
 
 ## React helpers
 

@@ -9,33 +9,44 @@ const greyscaleStain = createStainSwatches(greyscaleStainPrefix, '#ffffff', {
   accent: false,
 });
 
+/*
+TODO refactor to this format '*' required
+{
+  background: {
+    '*': 900, // any not otherwise specified here
+    'y': 0,   // if exactly 'y' use value from 'y'
+    'r': 0,   // if exactly 'r' use value from 'r'
+    inverse: {
+      '*': 500,     // any not otherwise specified here
+      'y': 900,     // if exactly 'y' use value from 'y'
+      'r': {'g': 0} // if exactly 'r' use value from 'g' !!!
+    }
+  }
+}
+*/
+
 const SYMBOL_PREFIX = Symbol('prefix');
 const SYMBOL_INVERTED = Symbol('inverted');
 const SYMBOL_MERGE_STAINS = Symbol('mergeStains');
-const SYMBOL_STAIN_PREFIXES = Symbol('stainKeys');
-
-const warn = msg => {
-  try {
-    console.warn(`Palette: ${msg}`); // eslint-disable-line
-  } catch (err) {
-    /* none */
-  }
-};
+const SYMBOL_STAIN_PREFIXES = Symbol('stainPrefixes');
+const SYMBOL_RESERVED_PROPS = Symbol('reservedProps');
 
 export default class Palette {
   constructor(options = {}) {
-    this.invalidSwatchIds = [
+    this[SYMBOL_RESERVED_PROPS] = [
+      'rgb',
+      'css',
+      'update',
+      'stains',
       'prefix',
       'options',
-      'stains',
       'inverted',
       'addStain',
       'addSwatch',
       'subscribe',
       'subscriptions',
-      'update',
-      'rgb',
-      'css',
+      'validateSwatch',
+      'getSwatchStainKey',
     ];
     this.options = {...paletteDefaults, ...options};
     this.subscriptions = [];
@@ -97,57 +108,78 @@ export default class Palette {
   }
 
   addSwatch(id, swatch = {}) {
-    const valid = (() => {
-      let validPrefixes =
-        swatch.prefix === '*' ||
-        this[SYMBOL_STAIN_PREFIXES].indexOf(swatch.prefix) > -1;
-      if (swatch.inverse) {
-        validPrefixes =
-          swatch.inverse.prefix === '*' ||
-          this[SYMBOL_STAIN_PREFIXES].indexOf(swatch.inverse.prefix) > -1;
-      }
-      return validPrefixes && this.invalidSwatchIds.join(',').indexOf(id) < 0;
-    })();
-
-    if (valid) {
-      if (!Object.getOwnPropertyDescriptor(this, id)) {
-        const getStainKey = swatchData => {
-          let prefix =
-            swatchData.prefix === '*' ? this.prefix : swatchData.prefix;
-          let suffix = swatchData.suffix;
-          if (this.inverted && swatchData.inverse) {
-            prefix =
-              swatchData.inverse.prefix === '*'
-                ? this.prefix
-                : swatchData.inverse.prefix;
-            suffix = swatchData.inverse.suffix;
-          }
-          return prefix + suffix;
-        };
-        Object.defineProperty(this, id, {
-          get() {
-            const key = getStainKey(swatch);
-            return this.stains[key];
-          },
-        });
-        Object.defineProperty(this.rgb, id, {
-          get() {
-            const key = getStainKey(swatch);
-            return this.stains.rgb[key];
-          },
-        });
-        Object.defineProperty(this.css, id, {
-          get() {
-            const key = getStainKey(swatch);
-            return this.stains.css[key];
-          },
-        });
-      } else {
-        warn(
-          `invalid swatch id - reserved: ${this.invalidSwatchIds.join(',')}`,
-        );
-      }
+    const valid = this.validateSwatch(id, swatch);
+    if (valid && !Object.getOwnPropertyDescriptor(this, id)) {
+      Object.defineProperty(this, id, {
+        get() {
+          const key = this.getSwatchStainKey(swatch);
+          return this.stains[key];
+        },
+      });
+      Object.defineProperty(this.rgb, id, {
+        get() {
+          const key = this.getSwatchStainKey(swatch);
+          return this.stains.rgb[key];
+        },
+      });
+      Object.defineProperty(this.css, id, {
+        get() {
+          const key = this.getSwatchStainKey(swatch);
+          return this.stains.css[key];
+        },
+      });
     }
+  }
+
+  addSwatches(swatches = {}) {
+    const swatchIds = Object.keys(swatches);
+    swatchIds.forEach(id => this.addSwatch(id, swatches[id]));
+  }
+
+  getSwatchStainKey(swatch) {
+    const {inverse, ...normal} = swatch;
+    const target = this.inverted ? inverse || {} : normal;
+    let value = target[this.prefix];
+    let prefix = this.prefix;
+    if (typeof value === 'undefined') {
+      value = target['*'];
+    }
+    if (typeof value === 'undefined') {
+      value = normal[this.prefix];
+    }
+    if (typeof value === 'undefined') {
+      value = normal['*'];
+    }
+    if (typeof value === 'object') {
+      prefix = Object.keys(value)[0];
+      value = value[prefix];
+    }
+    return prefix + value;
+  }
+
+  validateSwatch(id, swatch) {
+    let valid = this[SYMBOL_RESERVED_PROPS].indexOf(id) < 0;
+    const {inverse, ...normal} = swatch;
+    const settings = [normal];
+    if (inverse) settings.push(inverse);
+    settings.forEach(setting => {
+      const keys = Object.keys(setting || {});
+      valid = keys.indexOf('*') > -1;
+      if (valid) {
+        keys.forEach(key => {
+          if (key !== '*' && this[SYMBOL_STAIN_PREFIXES].indexOf(key) < 0) {
+            valid = false;
+          }
+          if (valid && typeof setting[key] === 'object') {
+            const valueKey = Object.keys(setting[key]);
+            valid =
+              valueKey.length === 1 &&
+              this[SYMBOL_STAIN_PREFIXES].indexOf(valueKey[0]) > -1;
+          }
+        });
+      }
+    });
+    return valid;
   }
 
   subscribe(fn) {

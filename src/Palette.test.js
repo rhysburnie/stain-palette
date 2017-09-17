@@ -19,17 +19,23 @@ test('new Palette()', t => {
   t.not(palette.prefix, 'r');
   palette.prefix = 'r';
   t.is(palette.prefix, 'r');
-  const swatch = {
-    prefix: '*',
-    suffix: 0,
+  const backgroundSwatch = {
+    '*': 0,
+    r: 500,
     inverse: {
-      prefix: '*',
-      suffix: 1000,
+      '*': 1000,
     },
   };
-  palette.addSwatch('background', swatch);
-  palette.prefix = 'r';
-  t.is(palette.background, palette.stains.r0);
+  // internal (no need to use normally)
+  // ==================================
+  t.true(palette.validateSwatch('background', backgroundSwatch));
+  t.true(!Object.getOwnPropertyDescriptor(palette, 'background'));
+  t.is(palette.getSwatchStainKey(backgroundSwatch), 'r500'); // only works if valid!
+  // ==================================
+  palette.addSwatch('background', backgroundSwatch);
+  t.is(palette.background, palette.stains.r500);
+  palette.prefix = 'greyscale';
+  t.is(palette.background, palette.stains.greyscale0);
   palette.inverted = true;
   t.is(palette.background, palette.stains.greyscale1000);
   palette.addStain('g', '#00ff00');
@@ -37,17 +43,94 @@ test('new Palette()', t => {
   palette.prefix = 'g';
   t.is(palette.background, palette.stains.g0);
   palette.addSwatch('alwaysGreen', {
-    prefix: 'g',
-    suffix: 0,
+    '*': {g: 0},
   });
-  palette.prefix = 'g';
+  palette.prefix = 'greyscale';
+  t.is(palette.alwaysGreen, palette.stains.g0);
+  palette.prefix = 'r';
   t.is(palette.alwaysGreen, palette.stains.g0);
   palette.inverted = true;
   t.is(palette.alwaysGreen, palette.stains.g0);
   t.is(palette.stains.gA.indexOf('#'), 0);
-  palette.addSwatch('fixedPrefixColor', {
-    prefix: 'greyscale',
-    suffix: 0,
+  // add multiple swatches at once
+  palette.addSwatches({
+    valid: {'*': 0},
+    valid2: {'*': 1000},
+    // can't be a reserved prop of palette
+    invalid: {addSwatches: {'*': 0}},
+    // must have at least '*'
+    invalid2: {ok: {}},
+    // stain prefix must be registered
+    invalid3: {
+      ok: {
+        notdefined: 0,
+      },
+    },
   });
-  t.is(palette.fixedPrefixColor, '#ffffff');
+  palette.prefix = 'greyscale';
+  t.is(palette.valid, '#ffffff');
+  t.is(palette.valid2, '#000000');
+  t.is(typeof palette.invalid, 'undefined');
+  t.is(typeof palette.invalid2, 'undefined');
+  t.is(typeof palette.invalid3, 'undefined');
+});
+
+test('real life usage example', t => {
+  const palette = new Palette();
+  palette.addStain('r', 'red');
+  palette.addStain('g', 'green');
+  palette.addStain('b', 'blue');
+  palette.addStain('y', 'yellow');
+  palette.addSwatches({
+    background: {
+      '*': 900,
+      y: 0,
+      inverse: {
+        '*': 500,
+        y: 900,
+      },
+    },
+    foreground: {
+      '*': 0,
+      y: {greyscale: 900},
+      inverse: {
+        '*': {greyscale: 0},
+        y: 0,
+      },
+    },
+  });
+  t.is(palette.background, palette.stains.greyscale900);
+  t.is(palette.foreground, palette.stains.greyscale0);
+  palette.inverted = true;
+  t.is(palette.background, palette.stains.greyscale500);
+  t.is(palette.foreground, palette.stains.greyscale0);
+  palette.inverted = false;
+  palette.prefix = 'r';
+  t.is(palette.background, palette.stains.r900);
+  t.is(palette.foreground, palette.stains.r0);
+  palette.inverted = true;
+  t.is(palette.background, palette.stains.r500);
+  t.is(palette.foreground, palette.stains.greyscale0);
+  palette.inverted = false;
+  palette.prefix = 'g';
+  t.is(palette.background, palette.stains.g900);
+  t.is(palette.foreground, palette.stains.g0);
+  palette.inverted = true;
+  t.is(palette.background, palette.stains.g500);
+  t.is(palette.foreground, palette.stains.greyscale0);
+  palette.inverted = false;
+  palette.prefix = 'b';
+  t.is(palette.background, palette.stains.b900);
+  t.is(palette.foreground, palette.stains.b0);
+  palette.inverted = true;
+  t.is(palette.background, palette.stains.b500);
+  t.is(palette.foreground, palette.stains.greyscale0);
+  palette.inverted = false;
+  palette.prefix = 'y';
+  t.is(palette.background, palette.stains.y0);
+  t.is(palette.foreground, palette.stains.greyscale900);
+  palette.inverted = true;
+  t.is(palette.background, palette.stains.y900);
+  t.is(palette.foreground, palette.stains.y0);
+  palette.inverted = false;
 });
