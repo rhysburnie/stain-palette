@@ -1,4 +1,5 @@
 import {test} from 'ava';
+import sinon from 'sinon';
 
 import Palette from './Palette';
 
@@ -133,4 +134,32 @@ test('real life usage example', t => {
   t.is(palette.background, palette.stains.y900);
   t.is(palette.foreground, palette.stains.y0);
   palette.inverted = false;
+});
+
+// TODO check how to spy again
+
+test('test subscriptions', t => {
+  const palette = new Palette();
+  const spy = sinon.spy();
+  palette.subscribe(spy);
+  t.is(palette.prefix, 'greyscale');
+  palette.prefix = 'greyscale';
+  t.is(spy.callCount, 0);
+  palette.inverted = true;
+  t.is(spy.callCount, 1);
+  palette.update();
+  t.is(spy.callCount, 2);
+  palette.addStain('r', 'red');
+  palette.prefix = 'r';
+  t.is(spy.callCount, 3);
+  t.true(palette.notificationsEnabled);
+  palette.notificationsEnabled = false;
+  palette.inverted = false;
+  t.false(palette.inverted);
+  t.is(spy.callCount, 3);
+  palette.notificationsEnabled = true;
+  palette.inverted = true;
+  t.is(spy.callCount, 4);
+  palette.inverted = true;
+  t.is(spy.callCount, 4);
 });

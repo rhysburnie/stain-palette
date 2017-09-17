@@ -9,27 +9,12 @@ const greyscaleStain = createStainSwatches(greyscaleStainPrefix, '#ffffff', {
   accent: false,
 });
 
-/*
-TODO refactor to this format '*' required
-{
-  background: {
-    '*': 900, // any not otherwise specified here
-    'y': 0,   // if exactly 'y' use value from 'y'
-    'r': 0,   // if exactly 'r' use value from 'r'
-    inverse: {
-      '*': 500,     // any not otherwise specified here
-      'y': 900,     // if exactly 'y' use value from 'y'
-      'r': {'g': 0} // if exactly 'r' use value from 'g' !!!
-    }
-  }
-}
-*/
-
 const SYMBOL_PREFIX = Symbol('prefix');
 const SYMBOL_INVERTED = Symbol('inverted');
 const SYMBOL_MERGE_STAINS = Symbol('mergeStains');
 const SYMBOL_STAIN_PREFIXES = Symbol('stainPrefixes');
 const SYMBOL_RESERVED_PROPS = Symbol('reservedProps');
+const SYMBOL_NOTIFY = Symbol('notify');
 
 export default class Palette {
   constructor(options = {}) {
@@ -47,6 +32,7 @@ export default class Palette {
       'subscriptions',
       'validateSwatch',
       'getSwatchStainKey',
+      'notificationsEnabled',
     ];
     this.options = {...paletteDefaults, ...options};
     this.subscriptions = [];
@@ -54,6 +40,7 @@ export default class Palette {
     this.rgb = {};
     this.css = {};
     this.inverted = false;
+    this[SYMBOL_NOTIFY] = true;
     this[SYMBOL_MERGE_STAINS] = stain => {
       const {...stains} = this.stains;
       this.stains = mergeStainObjects(stains, stain);
@@ -69,6 +56,7 @@ export default class Palette {
   }
 
   set prefix(prefix) {
+    if (prefix === this.prefix) return;
     this.update({prefix});
   }
 
@@ -77,7 +65,18 @@ export default class Palette {
   }
 
   set inverted(inverted) {
+    if (inverted === this.inverted) return;
     this.update({inverted});
+  }
+
+  get notificationsEnabled() {
+    return this[SYMBOL_NOTIFY];
+  }
+
+  set notificationsEnabled(notify) {
+    if (typeof notify === 'boolean') {
+      this[SYMBOL_NOTIFY] = notify;
+    }
   }
 
   /**
@@ -96,7 +95,10 @@ export default class Palette {
     if (typeof inverted === 'boolean' && inverted !== this[SYMBOL_INVERTED]) {
       this[SYMBOL_INVERTED] = inverted;
     }
-    this.subscriptions.forEach(fn => fn());
+
+    if (this[SYMBOL_NOTIFY]) {
+      this.subscriptions.forEach(fn => fn());
+    }
   }
 
   addStain(prefix, sourceColor, options = {}) {
