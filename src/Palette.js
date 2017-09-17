@@ -1,8 +1,8 @@
 import createStainSwatches from './createStainSwatches';
 import mergeStainObjects from './mergeStainObjects';
-import {greyscaleStainOptions} from './paletteDefaults';
+import {defaultStainOptions} from './paletteDefaults';
 
-const paletteDefaults = {...greyscaleStainOptions};
+const paletteDefaults = {...defaultStainOptions};
 const greyscaleStainPrefix = 'greyscale';
 const greyscaleStain = createStainSwatches(greyscaleStainPrefix, '#ffffff', {
   name: 'grey (default)',
