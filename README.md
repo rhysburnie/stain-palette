@@ -14,7 +14,7 @@ Get auto build working on install, currently would have to manually build.
 const palette = new Palette();
 ```
 
-Creates a `pallete` object with default stain swatches registered as `palette.stains.$0`, `palette.stains.$50`, `palette.stains.$100` to `palette.stains.$1000`.
+Creates a `pallete` object with default stain swatches registered as `palette.stains.greyscale0`, `palette.stains.greyscale50`, `palette.stains.greyscale100` to `palette.stains.greyscale1000`.
 
 These are grey values — the same as grey in Material Design with the additional `0` (white) and `1000` (black).
 
@@ -48,8 +48,8 @@ const backgroundSwatch = {
 palette.addSwatch('background', backgroundSwatch);
 ```
 
-Now calling `palette.background` will return `palette.stains.$0`
-because `'$'` (default) is the current `palette.prefix`, in which case
+Now calling `palette.background` will return `palette.stains.greyscale0`
+because `'greyscale'` (default) is the current `palette.prefix`, in which case
 the color returned will be the hex value white `'#ffffff'`.
 
 By calling `palette.inverted = true` the color returned would be black because
@@ -62,7 +62,7 @@ OK but grey is boring.
 What is a stain?
 
 By default a stain is a source color multiplied over a base (The greyscale used
-by the default `'$'` stain).
+by the default `'greyscale'` stain).
 
 It is possible to change the way it behaves but my main use case was for single
 color stain palletes.
@@ -96,7 +96,7 @@ In default mode `prefix` + `'0'` is sourceColor and the brightest available in t
 However the additional `prefix` + `'A'` (accent) is slightly lighter because by default
 it is white mixed over the sourceColor.
 
-> Note: the default '$' has no `$A` as it would be the same as `$0` (white)
+> Note: the default 'greyscale' has no `greyscaleA` as it would be the same as `greyscale0` (white)
 
 There is only one accent but you can configure palette to have more, in fact you can
 define an entirely different base scale also.

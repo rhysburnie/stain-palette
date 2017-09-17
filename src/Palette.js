@@ -1,9 +1,10 @@
 import createStainSwatches from './createStainSwatches';
 import mergeStainObjects from './mergeStainObjects';
-import {defaultStainOptions} from './paletteDefaults';
+import {greyscaleStainOptions} from './paletteDefaults';
 
-const paletteDefaults = {...defaultStainOptions};
-const defaultStain = createStainSwatches('$', '#ffffff', {
+const paletteDefaults = {...greyscaleStainOptions};
+const greyscaleStainPrefix = 'greyscale';
+const greyscaleStain = createStainSwatches(greyscaleStainPrefix, '#ffffff', {
   name: 'grey (default)',
   accent: false,
 });
@@ -46,9 +47,10 @@ export default class Palette {
       const {...stains} = this.stains;
       this.stains = mergeStainObjects(stains, stain);
       this[SYMBOL_STAIN_PREFIXES] = Object.keys(this.stains.prefixes);
-      this.prefix = stain.prefix;
     };
-    this[SYMBOL_MERGE_STAINS](defaultStain);
+
+    this[SYMBOL_MERGE_STAINS](greyscaleStain);
+    this.prefix = greyscaleStainPrefix;
   }
 
   get prefix() {
