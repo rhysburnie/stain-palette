@@ -136,8 +136,6 @@ test('real life usage example', t => {
   palette.inverted = false;
 });
 
-// TODO check how to spy again
-
 test('test subscriptions', t => {
   const palette = new Palette();
   const spy = sinon.spy();
