@@ -13,8 +13,8 @@ export default function createStainSwatches(prefix, sourceColor, options = {}) {
         const propName = prefix + key;
         if (settings.mode === 'mix' && settings.mixBase) {
           color = chroma.mix(
-            settings.mixBase,
             sourceColor,
+            settings.mixBase,
             settings.bases[key],
             settings.mixMode || 'rgb',
           );

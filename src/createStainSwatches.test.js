@@ -50,8 +50,8 @@ test('createStainSwatches (typical)', t => {
   t.is(stain.z900, expected900);
   t.is(stain.z1000, '#000000');
   const expectedA = chroma.mix(
-    options.accent.mixBase,
     sourceColor,
+    options.accent.mixBase,
     options.accent.bases.A,
   );
   t.is(stain.zA, expectedA.hex());
@@ -76,11 +76,11 @@ test('createStainSwatches (weird and wacky)', t => {
   const sourceColor = '#abcdef';
   const stain = createStainSwatches(prefix, sourceColor, options);
   const expected0 = chroma
-    .mix(options.scale.mixBase, sourceColor, options.scale.bases[0])
+    .mix(sourceColor, options.scale.mixBase, options.scale.bases[0])
     .hex();
   t.is(stain.z0, expected0);
   const expected500 = chroma
-    .mix(options.scale.mixBase, sourceColor, options.scale.bases[500])
+    .mix(sourceColor, options.scale.mixBase, options.scale.bases[500])
     .hex();
   t.is(stain.z500, expected500);
   const expectedA = chroma
