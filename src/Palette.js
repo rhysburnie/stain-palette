@@ -15,6 +15,7 @@ const SYMBOL_MERGE_STAINS = Symbol('mergeStains');
 const SYMBOL_STAIN_PREFIXES = Symbol('stainPrefixes');
 const SYMBOL_RESERVED_PROPS = Symbol('reservedProps');
 const SYMBOL_NOTIFY = Symbol('notify');
+const SYMBOL_SWATCH_IDS = Symbol('swatchIds');
 
 export default class Palette {
   constructor(options = {}) {
@@ -28,8 +29,10 @@ export default class Palette {
       'inverted',
       'addStain',
       'addSwatch',
+      'swatchIds',
       'subscribe',
       'subscriptions',
+      'stainPrefixes',
       'validateSwatch',
       'getSwatchStainKey',
       'notificationsEnabled',
@@ -41,6 +44,7 @@ export default class Palette {
     this.css = {};
     this.inverted = false;
     this[SYMBOL_NOTIFY] = true;
+    this[SYMBOL_SWATCH_IDS] = [];
     this[SYMBOL_MERGE_STAINS] = stain => {
       const {...stains} = this.stains;
       this.stains = mergeStainObjects(stains, stain);
@@ -79,6 +83,14 @@ export default class Palette {
     }
   }
 
+  get stainPrefixes() {
+    return this[SYMBOL_STAIN_PREFIXES];
+  }
+
+  get swatchIds() {
+    return this[SYMBOL_SWATCH_IDS];
+  }
+
   /**
    * Both prefix and inverted can be set at the same
    * time by using the update method directly if desired.
@@ -112,6 +124,7 @@ export default class Palette {
   addSwatch(id, swatch = {}) {
     const valid = this.validateSwatch(id, swatch);
     if (valid && !Object.getOwnPropertyDescriptor(this, id)) {
+      this[SYMBOL_SWATCH_IDS].push(id);
       Object.defineProperty(this, id, {
         get() {
           const key = this.getSwatchStainKey(swatch);
