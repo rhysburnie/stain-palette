@@ -5,20 +5,7 @@ import PropTypes from 'prop-types';
 import TestUtils from 'react-dom/test-utils';
 import PaletteProvider from './PaletteProvider';
 import PaletteHOC from './PaletteHOC';
-import {
-  createSuppressedConsole,
-  restoreConsole,
-} from '../../test/helpers/monkey-patch-console';
-
-test.before(() => {
-  createSuppressedConsole([
-    'Warning: Failed prop type',
-    'Warning: Failed child context type',
-    'Warning: Failed context type',
-  ]);
-});
-
-test.after(restoreConsole);
+import {createConsoleErrorSpy} from '../../test/helpers/console-utilities';
 
 test('preflight', t => {
   t.is(typeof React, 'object');
@@ -69,11 +56,14 @@ test('PaletteProvider: should enforce single child', t => {
 });
 
 test('PaletteProvider: should add palette to the child context', t => {
-  const spy = sinon.spy(console, 'error');
+  const spyError = createConsoleErrorSpy(sinon);
+  // creates spyError on console.log with and additional
+  // spy method: spyError.errorCallContainsOneOf
+
   const palette = mockPalette;
   const MockChild = createMockChild();
   // while this wont throw
-  // it should log errors
+  // it should log errors (we test that with spy)
   t.notThrows(() => {
     TestUtils.renderIntoDocument(
       <PaletteProvider>
@@ -81,10 +71,15 @@ test('PaletteProvider: should add palette to the child context', t => {
       </PaletteProvider>,
     );
   });
-  // (supressed errors)
-  // 'Warning: Failed child context type'
-  // 'Warning: Failed context type'
-  t.is(spy.callCount, 2);
+  const expectedSupressedErrors = [
+    'Warning: Failed child context type',
+    'Warning: Failed context type',
+  ];
+  t.true(spyError.errorCallContainsOneOf(expectedSupressedErrors, 0));
+  t.true(spyError.errorCallContainsOneOf(expectedSupressedErrors, 1));
+  t.is(spyError.callCount, 2);
+  spyError.reset();
+
   let tree;
   t.notThrows(() => {
     tree = TestUtils.renderIntoDocument(
@@ -93,10 +88,10 @@ test('PaletteProvider: should add palette to the child context', t => {
       </PaletteProvider>,
     );
   });
-  // should not error (same spy count)
-  t.is(spy.callCount, 2);
+  t.is(spyError.callCount, 0);
   const child = TestUtils.findRenderedComponentWithType(tree, MockChild);
   t.is(child.context.palette, palette);
+  spyError.restore();
 });
 
 test('PaletteHOC: ', t => {

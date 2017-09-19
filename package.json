@@ -36,6 +36,7 @@
     "prop-types": "^15.5.10",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
+    "react-test-renderer": "^15.6.1",
     "rollup": "^0.49.3",
     "rollup-plugin-babel": "^3.0.2",
     "sinon": "^3.2.1"
@@ -51,7 +52,7 @@
     "require": [
       "babel-register",
       "babel-polyfill",
-      "./test/helpers/setup-browser-env.js"
+      "./test/helpers/setup.js"
     ],
     "babel": "inherit"
   }
