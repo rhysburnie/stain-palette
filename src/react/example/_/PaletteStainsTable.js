@@ -31,21 +31,6 @@ class PaletteStainsTable extends React.Component {
   };
   /* eslint-enable react/forbid-prop-types */
 
-  shouldComponentUpdate(nextProps) {
-    // limit re-render to almost never
-    const palette = this.props.palette;
-    let shouldUpdate =
-      nextProps.stainPrefixes.length !== palette.stainPrefixes.length;
-
-    if (!shouldUpdate) {
-      const suffixes = getSuffixes(palette.options);
-      const nextSuffixes = getSuffixes(nextProps.palette.options);
-      shouldUpdate = nextSuffixes.length !== suffixes.length;
-    }
-
-    return shouldUpdate;
-  }
-
   render() {
     const {palette, showInfo, styles} = this.props;
     const suffixes = getSuffixes(palette.options);
