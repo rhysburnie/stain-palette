@@ -26,6 +26,7 @@ export default class Palette {
       'stains',
       'prefix',
       'options',
+      'inverse',
       'inverted',
       'addStain',
       'addSwatch',

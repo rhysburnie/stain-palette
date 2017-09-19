@@ -56,24 +56,42 @@ test('new Palette()', t => {
   // add multiple swatches at once
   palette.addSwatches({
     valid: {'*': 0},
-    valid2: {'*': 1000},
+    valid2: {
+      '*': 1000,
+      inverse: {
+        '*': 0,
+      },
+    }, // must have at least '*' at root
+    invalid: {ok: 0},
     // can't be a reserved prop of palette
-    invalid: {addSwatches: {'*': 0}},
-    // must have at least '*'
-    invalid2: {ok: {}},
+    invalid2: {
+      '*': 0,
+      addSwatches: {'*': 0},
+    },
     // stain prefix must be registered
     invalid3: {
+      '*': 0,
       ok: {
         notdefined: 0,
       },
     },
+    invalid4: {
+      '*': 0,
+      inverse: {
+        '*': 0,
+        // also inverse cant have inverse
+        inverse: 0,
+      },
+    },
   });
+  palette.inverted = false;
   palette.prefix = 'greyscale';
   t.is(palette.valid, '#ffffff');
   t.is(palette.valid2, '#000000');
   t.is(typeof palette.invalid, 'undefined');
   t.is(typeof palette.invalid2, 'undefined');
   t.is(typeof palette.invalid3, 'undefined');
+  t.is(typeof palette.invalid4, 'undefined');
 });
 
 test('real life usage example', t => {
