@@ -67,6 +67,12 @@ const configs = [
   'mergeStainObjects',
   'react/PaletteProvider',
   'react/PaletteHOC',
+  'react/example/demo.palette',
+  'react/example/demo.styles',
+  'react/example/PaletteStainsTable',
+  'react/example/PaletteStainSwatch',
+  'react/example/PaletteStaticSwatch',
+  'react/example/PaletteSwatch',
 ].forEach(fileName =>
   configs.push(
     makeConfig({
@@ -78,23 +84,5 @@ const configs = [
     }),
   ),
 );
-
-// configs.push({
-//   input: 'src/react/PaletteProvider.js',
-//   external,
-//   plugins: [babel(rc)],
-//   output: [
-//     {
-//       format: 'es',
-//       file: 'dist/react/PaletteProvider.js',
-//       sourcemap: true,
-//     },
-//     {
-//       format: 'cjs',
-//       file: 'dist/react/PaletteProvider.cjs.js',
-//       sourcemap: true,
-//     },
-//   ],
-// });
 
 export default configs;
