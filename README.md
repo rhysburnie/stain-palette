@@ -1,9 +1,5 @@
 # Stain Palette
 
-## TODO
-
-Get auto build working on install, currently would have to manually build.
-
 ## Usage
 
 * `import Palette from 'stain-palette'`
@@ -148,8 +144,6 @@ palette.addSwatches({
 ```
 
 ## React helpers
-
-(untested)
 
 While not reliant on React in anyway there are two helper available to connect a
 `palette` instance to components.
