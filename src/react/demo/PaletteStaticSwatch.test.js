@@ -6,8 +6,8 @@ import TestUtils from 'react-dom/test-utils';
 import ShallowRenderer from 'react-test-renderer/shallow';
 import {createConsoleErrorSpy} from '../../../test/helpers/console-utilities';
 import PaletteProvider from '../PaletteProvider';
-import PaletteStainSwatch from './PaletteStainSwatch';
-import RawPaletteStainSwatch from './_/PaletteStainSwatch';
+import PaletteStaticSwatch from './PaletteStaticSwatch';
+import RawPaletteStaticSwatch from './_/PaletteStaticSwatch';
 import demoStyles from './demo.styles';
 
 const mockPalette = {
@@ -18,14 +18,27 @@ const mockPalette = {
       ps: 'rgba(255,255,255)',
     },
   },
+  css: {},
 };
+
+Object.defineProperty(mockPalette, 'background', {
+  get() {
+    return mockPalette.stains.ps;
+  },
+});
+
+Object.defineProperty(mockPalette.css, 'background', {
+  get() {
+    return mockPalette.stains.css.ps;
+  },
+});
 
 test('preflight', t => {
   t.is(typeof React, 'object');
   t.is(typeof PropTypes, 'object');
   t.is(typeof TestUtils, 'object');
-  t.is(typeof PaletteStainSwatch, 'function');
-  t.is(typeof RawPaletteStainSwatch, 'function');
+  t.is(typeof PaletteStaticSwatch, 'function');
+  t.is(typeof RawPaletteStaticSwatch, 'function');
 });
 
 test(t => {
@@ -33,14 +46,14 @@ test(t => {
   const spyErrors = createConsoleErrorSpy(sinon);
   const expectedErrors = [
     'Warning: Failed prop type: The prop `prefix` is marked as required',
-    'Warning: Failed prop type: The prop `suffix` is marked as required',
+    'Warning: Failed prop type: The prop `id` is marked as required',
   ];
   // requires prefix and suffix
   // won't throw but we can check errors with spy
   t.notThrows(() => {
     TestUtils.renderIntoDocument(
       <PaletteProvider palette={palette}>
-        <PaletteStainSwatch />
+        <PaletteStaticSwatch />
       </PaletteProvider>,
     );
   });
@@ -53,20 +66,20 @@ test(t => {
   t.notThrows(() => {
     tree = TestUtils.renderIntoDocument(
       <PaletteProvider palette={palette}>
-        <PaletteStainSwatch prefix="p" suffix="s" />
+        <PaletteStaticSwatch prefix="p" id="background" />
       </PaletteProvider>,
     );
   });
   t.is(spyErrors.callCount, 0);
   const child = TestUtils.findRenderedComponentWithType(
     tree,
-    PaletteStainSwatch,
+    PaletteStaticSwatch,
   );
   t.is(child.context.palette, palette);
   const vdomDiv = TestUtils.findRenderedDOMComponentWithTag(tree, 'div');
   /* eslint-disable no-underscore-dangle */
   const style = vdomDiv[Object.keys(vdomDiv)[0]]._previousStyle;
-  t.is(style.background, mockPalette.stains.ps);
+  t.is(style.background, mockPalette.background);
   /* eslint-enable no-underscore-dangle */
   spyErrors.reset();
 
@@ -74,7 +87,7 @@ test(t => {
   t.notThrows(() => {
     tree = TestUtils.renderIntoDocument(
       <PaletteProvider palette={palette}>
-        <PaletteStainSwatch prefix="p" suffix="s" showInfo />
+        <PaletteStaticSwatch prefix="p" id="background" showInfo />
       </PaletteProvider>,
     );
   });
@@ -88,10 +101,10 @@ test(t => {
   t.notThrows(() => {
     const renderer = new ShallowRenderer();
     renderer.render(
-      <RawPaletteStainSwatch
+      <RawPaletteStaticSwatch
         palette={mockPalette}
         prefix="p"
-        suffix="s"
+        id="background"
         showInfo
       />,
     );
@@ -100,7 +113,7 @@ test(t => {
     t.deepEqual(
       result.props.children,
       <div style={demoStyles.swatchInfo}>
-        ps
+        background
         <br />
         #ffffff
         <br />
