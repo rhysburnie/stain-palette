@@ -1,3 +1,7 @@
+#v 0.1.0
+
+New dev version
+
 # v0.0.0
 
 Palette works and so do the react Provider / HOC (I think) but went

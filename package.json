@@ -1,6 +1,6 @@
 {
   "name": "stain-palette",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "jsnext:main": "dist/Palette.es.js",
   "main": "dist/Palette.js",
   "umd:moduleName": "StainPalette",
@@ -50,11 +50,7 @@
     "prepare": "npm run build:dist"
   },
   "ava": {
-    "require": [
-      "babel-register",
-      "babel-polyfill",
-      "./test/helpers/setup.js"
-    ],
+    "require": ["babel-register", "babel-polyfill", "./test/helpers/setup.js"],
     "babel": "inherit"
   }
 }
