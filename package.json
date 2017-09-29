@@ -15,14 +15,13 @@
   },
   "devDependencies": {
     "ava": "^0.19.1",
+    "babel-cli": "^6.26.0",
     "babel-eslint": "^7.2.2",
     "babel-polyfill": "^6.23.0",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-preset-es2015-rollup": "^3.0.0",
+    "babel-preset-env": "^1.6.0",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
     "babel-register": "^6.24.1",
-    "babelrc-rollup": "^3.0.0",
     "browser-env": "^3.2.0",
     "enzyme": "^2.9.1",
     "eslint": "^3.19.0",
@@ -38,19 +37,22 @@
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "react-test-renderer": "^15.6.1",
-    "rollup": "^0.49.3",
-    "rollup-plugin-babel": "^3.0.2",
     "sinon": "^3.2.1"
   },
   "scripts": {
     "test": "ava",
-    "test:remote": "ava **/*.remoteTest.js",
     "lint": "eslint .",
-    "build:dist": "rollup -c",
-    "prepare": "npm run build:dist"
+    "build": "babel --ignore=**/*.test.js src -d dist --source-maps",
+    "prepare": "npm run build",
+    "clean": "rm -rf dist test-dist",
+    "test:build": "babel src -d test-dist && ava test-dist/*.test.js test-dist/**/*.test.js test-dist/**/**/*.test.js"
   },
   "ava": {
-    "require": ["babel-register", "babel-polyfill", "./test/helpers/setup.js"],
+    "require": [
+      "babel-register",
+      "babel-polyfill",
+      "./test/helpers/setup.js"
+    ],
     "babel": "inherit"
   }
 }

@@ -1,6 +1,22 @@
 #v 0.1.0
 
-New dev version
+Removed rollup.
+Using plain babel-cli for build.
+
+Modified command scripts:
+
+```
+"scripts": {
+  "test": "ava",
+  "lint": "eslint .",
+  "build": "babel --ignore=**/*.test.js src -d dist --source-maps",
+  "prepare": "npm run build",
+  "clean": "rm -rf dist test-dist",
+  "test:build": "babel src -d test-dist && ava test-dist/*.test.js test-dist/**/*.test.js test-dist/**/**/*.test.js"
+}
+```
+
+`test:build` confirms tests pass on transpiled files.
 
 # v0.0.0
 

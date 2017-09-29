@@ -1,4 +1,5 @@
 dist
+test-dist
 *.ignore*
 *.log
 node_modules
