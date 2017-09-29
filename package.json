@@ -1,6 +1,6 @@
 {
   "name": "stain-palette",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "dist/Palette.js",
   "author": "Rhys Burnie",
   "license": "MIT",
