@@ -1,9 +1,7 @@
 {
   "name": "stain-palette",
   "version": "0.1.0",
-  "jsnext:main": "dist/Palette.es.js",
   "main": "dist/Palette.js",
-  "umd:moduleName": "StainPalette",
   "author": "Rhys Burnie",
   "license": "MIT",
   "repository": {
@@ -45,14 +43,11 @@
     "build": "babel --ignore=**/*.test.js src -d dist --source-maps",
     "prepare": "npm run build",
     "clean": "rm -rf dist test-dist",
-    "test:build": "babel src -d test-dist && ava test-dist/*.test.js test-dist/**/*.test.js test-dist/**/**/*.test.js"
+    "test:build":
+      "babel src -d test-dist && ava test-dist/*.test.js test-dist/**/*.test.js test-dist/**/**/*.test.js"
   },
   "ava": {
-    "require": [
-      "babel-register",
-      "babel-polyfill",
-      "./test/helpers/setup.js"
-    ],
+    "require": ["babel-register", "babel-polyfill", "./test/helpers/setup.js"],
     "babel": "inherit"
   }
 }
