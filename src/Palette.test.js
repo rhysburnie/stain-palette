@@ -163,7 +163,18 @@ test('test subscriptions', t => {
   t.is(spy.callCount, 0);
   palette.inverted = true;
   t.is(spy.callCount, 1);
-  palette.update();
+  // update can be used to set
+  // multiple props at once
+  palette.update({
+    prefix: palette.prefix,
+    inverted: palette.inverted,
+  });
+  // however if the values are the
+  // same as current no notification
+  // will be made (because no change)
+  t.is(spy.callCount, 1);
+  palette.update({forceNotify: true});
+  // no actual change but force the notification (if notificationsEnabled)
   t.is(spy.callCount, 2);
   palette.addStain('r', 'red');
   palette.prefix = 'r';

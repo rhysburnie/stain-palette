@@ -61,7 +61,6 @@ export default class Palette {
   }
 
   set prefix(prefix) {
-    if (prefix === this.prefix) return;
     this.update({prefix});
   }
 
@@ -70,7 +69,6 @@ export default class Palette {
   }
 
   set inverted(inverted) {
-    if (inverted === this.inverted) return;
     this.update({inverted});
   }
 
@@ -98,18 +96,24 @@ export default class Palette {
    * It also allows for future features to update here too.
    */
   update(settings = {}) {
+    let notify = settings.forceNotify;
     const {prefix, inverted} = settings;
+
     if (
       typeof prefix === 'string' &&
+      prefix !== this[SYMBOL_PREFIX] &&
       this[SYMBOL_STAIN_PREFIXES].indexOf(prefix) > -1
     ) {
       this[SYMBOL_PREFIX] = prefix;
-    }
-    if (typeof inverted === 'boolean' && inverted !== this[SYMBOL_INVERTED]) {
-      this[SYMBOL_INVERTED] = inverted;
+      notify = true;
     }
 
-    if (this[SYMBOL_NOTIFY]) {
+    if (typeof inverted === 'boolean' && inverted !== this[SYMBOL_INVERTED]) {
+      this[SYMBOL_INVERTED] = inverted;
+      notify = true;
+    }
+
+    if (notify && this[SYMBOL_NOTIFY]) {
       this.subscriptions.forEach(fn => fn());
     }
   }
